@@ -5,12 +5,13 @@ class RulesCalled(object,):
     def __init__(self, pathTowrite):
         self.pathTowrite = pathTowrite
 
+    # Information written in the command Prompt and saved in a txt file
     def writeRule(self,command,nameFile):
         lpFile = open(self.pathTowrite + nameFile, 'w')
         subprocess.call("(cd D:\Diego\MASTER\Master Thesis\Clingon\clingo-5.2.1-win64 && " + command + ")", shell=True, stdout=lpFile)
         lpFile.close()
 
-
+    # Call each ASP file depending of the information given
     def eachRule(self, ruleID,solution,*args):
         if not solution:
             ASPmainFile = open("D:\\Diego\\MASTER\\Master Thesis\\Clingon\\clingo-5.2.1-win64\\usecase1V1.1Temp.lp",'r')
@@ -71,7 +72,7 @@ class RulesCalled(object,):
 
                 index += 1
 
-
+    # ASP files written in different format that should be called by name
     def writefileRule(self,start,end,file,TempText,ruleID):
         rulesArray = ["rule12","rule13","rule21","rule22","rule23","rule24","rule25","rule26","rule27","rule28","rule30","rule31",
                       "rule32","rule33"]

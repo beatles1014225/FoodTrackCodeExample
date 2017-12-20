@@ -7,14 +7,17 @@ class LinesFeatures(object):
         self.outputEntities = [entity for entity in self.dxf.entities]
         self.lineLpPath = lineLpPathFile
 
+    # Read start coordinates from a DXF file which have as a type "LINE"
     def linexyzCoordinatesStartVertex(self):
         list_of_verticesStart = [entity.start for entity in self.outputEntities if entity.dxftype == 'LINE']
         return(list_of_verticesStart)
 
+    # Read end coordinates from a DXF file which have as a type "LINE"
     def linexyzCoordinatesEndVertex(self):
         list_of_verticesEnd = [entity.end for entity in self.outputEntities if entity.dxftype == 'LINE']
         return(list_of_verticesEnd)
 
+    # Read layers from a DXF file which have as a type "LINE"
     def layerList(self):
         layers = []
         all_lines = [entity for entity in self.dxf.entities if entity.dxftype == 'LINE']
@@ -22,6 +25,7 @@ class LinesFeatures(object):
             layers.append(line.layer.lower())
         return(layers)
 
+    # Read layers from a DXF file which have as a type "LWPOLYLINE"
     def layerListPolyline(self):
         layers = []
         all_lines = [entity for entity in self.dxf.entities if entity.dxftype == 'LWPOLYLINE']
@@ -29,6 +33,7 @@ class LinesFeatures(object):
             layers.append(line.layer.lower())
         return(layers[1])
 
+    # Convert "LWPOLYLINE" type to "LINE"
     def PolylineToLine(self):
         linexyCoordinatesVertex = []
         list_of_polylines = [entity.points for entity in self.outputEntities if entity.dxftype == 'LWPOLYLINE']
@@ -38,7 +43,7 @@ class LinesFeatures(object):
                 linexyCoordinatesVertex.append((vertex + (random.uniform(29.000, 39.000),)))
         return(linexyCoordinatesVertex)
 
-
+    # Assign correct heights values to each line even if lines are part of several entities
     def lineGeometryOrganization(self,linexyzCoordinatesStartVertex,linexyzCoordinatesEndVertex,lineValue):
         self.lineID = lineValue
         valueIDLayer = lineValue
@@ -54,8 +59,8 @@ class LinesFeatures(object):
                     heightStart = random.uniform(29.000, 30.000)
                     heightEnd = random.uniform(29.000, 30.000)
                 else:
-                    startHeightAssessment = binary_search(referenceCoordinatesSorted,linesVertexEnd[1])
-                    endHeightAssessment = binary_search(referenceCoordinatesSorted,linesVertexStart[1])
+                    startHeightAssessment = self.binary_search(referenceCoordinatesSorted,linesVertexEnd[1])
+                    endHeightAssessment = self.binary_search(referenceCoordinatesSorted,linesVertexStart[1])
                     if startHeightAssessment == False:
                         heightEnd = random.uniform(29.000, 30.000)
                     elif type(startHeightAssessment) == float:
@@ -90,6 +95,7 @@ class LinesFeatures(object):
         lpLinesFile.close()
         print("lines lp file created")
 
+    # Assign correct heights values to each line even if lines are part of several entities
     def lineGeometryOrganizationOtherPipes(self,linexyzCoordinatesStartVertex,linexyzCoordinatesEndVertex,lineValue):
         self.lineID = lineValue
         valueIDLayer = lineValue
@@ -105,8 +111,8 @@ class LinesFeatures(object):
                     heightStart = random.uniform(29.700, 30.700)
                     heightEnd = random.uniform(29.700, 30.700)
                 else:
-                    startHeightAssessment = binary_search(referenceCoordinatesSorted,linesVertexEnd[1])
-                    endHeightAssessment = binary_search(referenceCoordinatesSorted,linesVertexStart[1])
+                    startHeightAssessment = self.binary_search(referenceCoordinatesSorted,linesVertexEnd[1])
+                    endHeightAssessment = self.binary_search(referenceCoordinatesSorted,linesVertexStart[1])
                     if startHeightAssessment == False:
                         heightEnd = random.uniform(29.700, 30.700)
                     elif type(startHeightAssessment) == float:
@@ -143,6 +149,7 @@ class LinesFeatures(object):
         lpLinesFile.close()
         print("lines lp file with other pipe services created")
 
+    # Assign correct heights values to each line even if lines are part of several entities
     def PolylineTolineGeometryOrganization(self,linexyzCoordinatesVertex,lineValue):
         self.lineID = lineValue
         listLayers = self.layerListPolyline()
@@ -172,6 +179,7 @@ class LinesFeatures(object):
         lpLinesFile.close()
         print("Polylines lp file created")
 
+    # To identify lines already assigned
     def indexIDLines(self,listLayers,layer, valueIDLayer):
         if layer in listLayers and len(listLayers) == 1:
             valueIDLayer += 1
@@ -186,21 +194,22 @@ class LinesFeatures(object):
     def finalLineID(self):
         return(self.lineID)
 
-def binary_search(array, target):
-    lower = 0
-    upper = len(array)
-    while lower < upper:
-        x = lower + (upper - lower) // 2
-        val = array[x][0]
-        if target == val:
-            return array[x][1]
-        elif target > val:
-            if lower == x:
-                break
-            lower = x
-        elif target < val:
-            upper = x
-    return False
+    # To seek lines already assigned in the array lines
+    def binary_search(self,array, target):
+        lower = 0
+        upper = len(array)
+        while lower < upper:
+            x = lower + (upper - lower) // 2
+            val = array[x][0]
+            if target == val:
+                return array[x][1]
+            elif target > val:
+                if lower == x:
+                    break
+                lower = x
+            elif target < val:
+                upper = x
+        return False
 
 
 
